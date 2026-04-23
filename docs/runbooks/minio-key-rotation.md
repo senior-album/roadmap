@@ -9,7 +9,7 @@
 
 ## 0. 사전 확인
 
-이 런북은 맥미니 `~/album-deploy/` 작업 디렉터리에서 실행한다고 가정한다.
+이 런북은 맥미니 `/Users/thekim123/workspace/senior-album/album-deploy/` 작업 디렉터리에서 실행한다고 가정한다 (`~/album-deploy` 아님, 2026-04-23 확인).
 
 ```bash
 # 현재 컨텍스트가 senior-album k3s 클러스터인지 확인
@@ -242,3 +242,71 @@ kubectl -n senior-album rollout restart deployment/minio deployment/backend
 - [ ] 프로젝트 보드 #87 상태 유지 (`In progress`) — KAKAO/POSTGRES 남음
 
 다음 단계: `KAKAO_CLIENT_SECRET` 회전 (카카오 개발자 콘솔에서 재발급 후 동일 절차).
+
+---
+
+## 10. 2026-04-23 실행 중 발견된 함정들
+
+이 런북을 실제로 한 번 돌리면서 드러난 이슈들. 다음 회전 시 참고.
+
+### 10-1. `k8s/sealed/backend-secret.yaml` 이 `.gitignore` 로 untracked 상태
+
+**증상**: `kubeseal --merge-into` 로 파일을 수정해도 `git diff` 가 빈 결과. `git status` 에도 안 찍힘. `cat` 으로는 내용 확인됨.
+
+**원인**: `.gitignore` 에 광범위한 `*secret*` 같은 규칙이 걸려있어서 SealedSecret 파일까지 함께 무시됨.
+
+**대응**:
+- SealedSecret 은 **git 에 커밋하는 게 정상** — 암호문은 controller private key 없이는 풀 수 없어 public-safe
+- `.gitignore` 에 negation 추가: `!k8s/sealed/*.yaml`
+- 또는 `git add -f k8s/sealed/backend-secret.yaml` 로 강제 추가 후 규칙 정비
+- 커밋 안 하면 클러스터 재생성 (disaster recovery) 시 복원 불가
+
+```bash
+git check-ignore -v k8s/sealed/backend-secret.yaml
+git ls-files k8s/sealed/   # 이 목록에 해당 파일이 있어야 정상
+```
+
+### 10-2. 새 이미지가 신규 필수 env 를 요구할 때 SealedSecret 미마이그레이션
+
+**증상**: MinIO 회전 후 backend 파드가 CrashLoopBackOff. 로그에 Pydantic ValidationError — `JWT_REFRESH_SECRET Field required`.
+
+**원인**: 이 회전 작업과 무관하게, 앞선 T-009 (JWT refresh 토큰) 머지 시점부터 이미지가 `JWT_REFRESH_SECRET` 을 요구했는데, album-deploy SealedSecret 에는 해당 필드가 추가 안 된 상태였음. 장기 running 구 파드가 계속 살아있어서 문제가 은닉돼 있었고, MinIO 회전 작업이 `rollout restart` / `set env` 로 pod template hash 를 바꾸면서 **새 이미지가 실제로 처음 기동을 시도** → 즉사.
+
+**교훈**: Secret 회전과 이미지 버전 간 의존성은 분리된 변경처럼 보여도 실제 rollout 시점에 상호작용한다. 이미지에 새 필수 env 가 추가된 PR 가 머지되면, **배포 전에 SealedSecret 먼저 갱신** 하는 것을 release checklist 로 고정할 것.
+
+**대응** (이번에 사용한 절차):
+```bash
+JWT_REFRESH="$(openssl rand -base64 48)"
+kubectl -n senior-album create secret generic backend-secret \
+  --from-literal=JWT_REFRESH_SECRET="${JWT_REFRESH}" \
+  --dry-run=client -o yaml | \
+  kubeseal --controller-namespace kube-system \
+           --controller-name sealed-secrets-controller \
+           --format yaml --merge-into k8s/sealed/backend-secret.yaml
+kubectl apply -f k8s/sealed/backend-secret.yaml
+kubectl -n senior-album delete pod -l app=backend   # backoff 긴 경우 수동 재시도
+```
+
+### 10-3. `NO_ALBUMENTATIONS_UPDATE` 미설정으로 인한 liveness timeout
+
+**증상**: 새 backend 파드가 liveness probe connection refused 로 계속 재시작. `:8000` 이 열리지 않음.
+
+**원인**: Albumentations 라이브러리가 기동 시 버전 체크 HTTP 호출을 시도하는데, 컨테이너 네트워크 상태에 따라 걸리면 FastAPI `:8000` 오픈 전에 liveness initialDelay 초과.
+
+**임시 대응** (이번 세션):
+```bash
+kubectl -n senior-album set env deployment/backend NO_ALBUMENTATIONS_UPDATE=1
+```
+
+**영구 대응**: album-backend 리포 Dockerfile 런타임 stage 에 `ENV NO_ALBUMENTATIONS_UPDATE=1` 추가 (PR [album-backend#21](https://github.com/senior-album/album-backend/pull/21)). 이미지 자체 특성이므로 이미지에 박아두는 것이 옳다. 머지 후 CI 가 backend.yaml 태그를 자동 bump 하면 자연 해결.
+
+---
+
+## 11. 다음 회전 전 체크리스트 (위 함정들 방지)
+
+- [ ] `k8s/sealed/` 가 전부 `git ls-files` 에 잡히는지 확인
+- [ ] 최근 머지된 backend PR 들을 훑어 **신규 필수 env 추가** 가 있었는지 확인 → 있으면 SealedSecret 먼저 마이그레이션
+- [ ] `album-deploy` 의 git status 가 clean 이고 origin/main 과 sync 돼있는지
+- [ ] `kubectl -n senior-album get pods` 로 회전 시작 전 모든 파드 Ready 상태 확인
+- [ ] controller private key 백업 존재 확인 (T-050 후속)
+
