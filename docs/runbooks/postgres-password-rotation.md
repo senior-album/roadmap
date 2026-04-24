@@ -19,13 +19,24 @@ kubectl config current-context
 kubectl -n senior-album get deploy backend -o name
 kubectl -n senior-album get cronjob postgres-backup -o name
 
+# kubeseal controller 의 정확한 이름/네임스페이스 확인 — §2 에서 그대로 씀
+kubectl get deploy -A | grep -i sealed
+# 기대 출력 예: kube-system   sealed-secrets-controller   1/1 ...
+# `sealed-secrets` 가 아닌 `sealed-secrets-controller` 인 클러스터 많음 (#87 회전 시 1회 실패)
+
 cd /Users/thekim123/workspace/senior-album/album-deploy && git status && git pull --rebase
 ```
 
+`SEALED_CONTROLLER_NAME` / `SEALED_CONTROLLER_NS` 를 위 출력값으로 셸 변수에 박아두면 §2 에서 오타 위험 줄어듦:
+```bash
+SEALED_CONTROLLER_NAME=sealed-secrets-controller   # 위 grep 결과로 교체
+SEALED_CONTROLLER_NS=kube-system
+```
+
 **필수 선행**:
-- [ ] `album-backend#55` 머지 + 새 이미지 rollout 완료
-- [ ] `album-deploy#8` 머지 + 실 ConfigMap 에 `POSTGRES_HOST/PORT/USER/DB` 적용 완료
-- [ ] `kubectl -n senior-album get configmap backend-config -o yaml | grep -E 'POSTGRES_|DATABASE_URL'` — `POSTGRES_HOST/PORT/USER/DB` 만 보이고 `DATABASE_URL` 은 없어야 함
+- [x] `album-backend#55` 머지 + 새 이미지 rollout 완료
+- [x] `album-deploy#8` 머지 + 실 ConfigMap 에 `POSTGRES_HOST/PORT/USER/DB` 적용 완료
+- [x] `kubectl -n senior-album get configmap backend-config -o yaml | grep -E 'POSTGRES_|DATABASE_URL'` — `POSTGRES_HOST/PORT/USER/DB` 만 보이고 `DATABASE_URL` 은 없어야 함
 
 위 조건이 안 맞으면 회전 후 backend 가 옛 DATABASE_URL fallback 으로 옛 비밀번호로 접속 시도 → 실패. 반드시 확인.
 
@@ -56,23 +67,27 @@ cd /Users/thekim123/workspace/senior-album/album-deploy
 kubectl -n senior-album create secret generic backend-secret \
   --from-literal=POSTGRES_PASSWORD="${NEW_PG_PASSWORD}" \
   --dry-run=client -o yaml | \
-  kubeseal --controller-namespace kube-system --controller-name sealed-secrets \
+  kubeseal --controller-namespace "$SEALED_CONTROLLER_NS" \
+           --controller-name "$SEALED_CONTROLLER_NAME" \
            --format yaml --merge-into k8s/sealed/backend-secret.yaml
 
 git diff k8s/sealed/backend-secret.yaml   # POSTGRES_PASSWORD 라인만 바뀌어야 함
 git add k8s/sealed/backend-secret.yaml
 git commit -m "security: rotate POSTGRES_PASSWORD in backend SealedSecret (roadmap#87)"
 git push
+
+# ArgoCD sync 기다리지 말고 즉시 적용 (반드시 — sync 지연으로 §3 시점까지 옛 값이 cluster 에 남아있으면 §4 rollout 후 새 pod 가 옛 값으로 인증 시도 → 실패)
+kubectl apply -f k8s/sealed/backend-secret.yaml
 ```
 
-> controller name 이 다를 수 있음. 실패 시 `kubectl -n kube-system get deploy` 로 확인.
-
-controller 가 SealedSecret 을 디코드해서 Secret `backend-secret` 의 `POSTGRES_PASSWORD` 키만 새 값으로 갱신할 때까지 ~10초. 확인:
+controller 가 SealedSecret 을 디코드해서 Secret `backend-secret` 의 `POSTGRES_PASSWORD` 키만 새 값으로 갱신할 때까지 ~10초. **반드시 일치 확인 후 §3 진행** (#87 회전 시 이 검증 스킵해서 30분 디버깅):
 
 ```bash
-kubectl -n senior-album get secret backend-secret \
-  -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d; echo
-# → $NEW_PG_PASSWORD 와 일치
+sleep 10
+APPLIED=$(kubectl -n senior-album get secret backend-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)
+echo "match: $([[ "$APPLIED" == "$NEW_PG_PASSWORD" ]] && echo YES || echo NO)"
+echo "applied_len=${#APPLIED}  newpw_len=${#NEW_PG_PASSWORD}"
+# 반드시 match: YES + 두 길이 일치. NO 면 절대 §3 진행 금지 — kubeseal 단계 재시도
 ```
 
 ---
@@ -102,6 +117,11 @@ kubectl -n senior-album rollout status deployment/backend --timeout=120s
 ```
 
 새 pod 가 SealedSecret 에서 디코드된 새 `POSTGRES_PASSWORD` 를 envFrom 으로 받음 → `config.py` 의 `database_url` computed property 가 `postgresql+asyncpg://postgres:NEW_PASSWORD@postgres:5432/senior_album` 으로 조립 → DB 인증 성공.
+
+> **주의 — envFrom 캐시**: `envFrom` 으로 받은 env 는 **pod 생성 시점에 fixed**. Secret 만 갱신하고 pod 재시작 안 하면 옛 값 그대로 사용. `rollout restart` 면 보통 충분하지만, 옛 pod 가 CrashLoopBackOff 상태로 남아있으면 강제 삭제 필요:
+> ```bash
+> kubectl -n senior-album delete pod -l app=backend --force --grace-period=0
+> ```
 
 `postgres-backup` CronJob 은 다음 스케줄 (18:00 UTC) 에 자동으로 새 Secret 값을 받아 동작. 별도 조치 불필요.
 
@@ -162,17 +182,33 @@ git history 의 SealedSecret 커밋은 암호화돼 있어 노출 위험 없음 
 2. ConfigMap 의 `POSTGRES_*` 가 아직 옛 `DATABASE_URL` 인 상태 (사전 확인 §0 누락)
 3. backend 이미지가 #55 머지 전 옛 이미지 (DATABASE_URL fallback 로 옛 값 사용)
 
-진단:
+진단 (세 값 모두 일치해야 함):
 ```bash
-# SealedSecret 적용 값
-kubectl -n senior-album get secret backend-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d
-# pod 가 실제로 본 값 (해시 비교용 — 평문 출력 금지)
-kubectl -n senior-album exec deployment/backend -- env | grep POSTGRES_PASSWORD | sha256sum
-# DB 가 받아들이는 값 (테스트 — 평문 인자 주의)
-kubectl -n senior-album exec "$PG_POD" -- env PGPASSWORD="${NEW_PG_PASSWORD}" psql -U postgres -d senior_album -c "SELECT 1;"
+# 1) SealedSecret 디코드 값 vs NEW_PG_PASSWORD
+APPLIED=$(kubectl -n senior-album get secret backend-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)
+echo "secret_match: $([[ "$APPLIED" == "$NEW_PG_PASSWORD" ]] && echo YES || echo NO)"
+
+# 2) backend pod 의 env 가 가진 POSTGRES_PASSWORD (해시 비교 — 평문 출력 금지)
+NEW_POD=$(kubectl -n senior-album get pod -l app=backend -o jsonpath='{.items[0].metadata.name}')
+echo "pod_env_sha:    $(kubectl -n senior-album exec "$NEW_POD" -- sh -c 'echo -n "$POSTGRES_PASSWORD" | sha256sum' | cut -c1-16)"
+echo "newpw_sha:     $(echo -n "$NEW_PG_PASSWORD" | sha256sum | cut -c1-16)"
+
+# 3) DB 가 받아들이는 값 — **반드시 네트워크 경유 (다른 pod) 로 검증**
+#    `kubectl exec $PG_POD -- psql -U postgres` 는 로컬 socket peer auth 라
+#    비밀번호 검증 없이 통과 → 헛 검증 (#87 회전 시 1시간 헤맨 원인)
+kubectl -n senior-album run dbtest --rm -it --restart=Never \
+  --image=postgres:15-alpine --labels=app=backend \
+  --env=PGPASSWORD="$NEW_PG_PASSWORD" \
+  -- sh -c 'psql -h postgres -U postgres -d senior_album -c "SELECT '\''auth_ok'\'' AS r;"'
+# → "auth_ok" 출력되면 DB 는 NEW_PG_PASSWORD 받아들이는 상태.
+# `--labels=app=backend` 필수 — NetworkPolicy 가 임의 라벨 pod 의 postgres 접근 차단.
 ```
 
-세 값이 일치해야 함.
+위 세 결과로 진단:
+- 1) NO → kubeseal 단계 다시. 흔한 원인: controller 이름 오타 (§0 의 grep 결과 다시 확인)
+- 1) YES + 2) sha 다름 → pod env 캐시 stale → §4 의 force delete 박스 참조
+- 1) YES + 2) sha 일치 + 3) password fail → ALTER USER 가 다른 값으로 됐음. ALTER USER 재실행 후 다시 검증
+- 모두 OK 면 backend 코드 / NetworkPolicy / pg_hba.conf 쪽으로 의심 이동
 
 ### 7-3. 영속적 실패: 임시로 옛 비밀번호 패턴으로 ALTER USER 다시 (긴급용)
 서비스 복구 우선이라면, 직전 알려진 비밀번호로 다시 ALTER USER 후 SealedSecret 도 그 값으로 되돌림. 단 노출된 값으로 되돌리는 거라 회전 효과는 사라짐 — **#87 관점에서는 미완료 처리**.
@@ -185,6 +221,12 @@ kubectl -n senior-album exec "$PG_POD" -- env PGPASSWORD="${NEW_PG_PASSWORD}" ps
 - [ ] album-deploy SealedSecret PR 머지 확인
 - [ ] 다음날 18:00 UTC 정기 백업 성공 여부 재확인 (수동 테스트가 통과해도 환경 차이로 정기 실행만 실패하는 케이스 있음)
 - [ ] 프로젝트 보드 #87 → `Done`
+
+> **zsh 사용자**: §6 의 `history -c` 는 bash 전용. zsh 에서는:
+> ```bash
+> fc -W && sed -i '' -E '/NEW_PG_PASSWORD|PGPASSWORD|ALTER USER/d' ~/.zsh_history && fc -R
+> ```
+> 또는 솔로 머신이면 새 터미널 열기만으로도 충분 (현재 세션 변수는 unset 으로 이미 정리).
 
 ---
 
