@@ -1,6 +1,6 @@
 # T-004 OpenSearch 얼굴 임베딩 인덱스 암호화 — 설계 스펙
 
-**상태**: 설계 초안. 결정 대기 중.
+**상태**: 결정 완료 (2026-04-27). Phase 1+2+3 풀 채택 + 결합공격 차단 (`hashed_resident_id`) 추가. (b), (c) 는 후속 작업으로 분리.
 **이슈**: roadmap#4
 **위협**: I-01 — 생체정보 평문 저장. 얼굴 임베딩(512-dim float 벡터) 은 개인정보보호법 §23 민감정보 중 **생체인식정보** 에 해당.
 **관련**: T-003 (DB 평문 PII) 와 함께 "저장 시 암호화" 보강 작업군.
@@ -115,9 +115,13 @@ backend 계정 권한: `face_embeddings` 인덱스에 read/write/delete. 다른 
 ## 5. 결정 포인트
 
 1. **Phase 1 FileVault 상태 확인** — 지금 맥미니가 FileVault ON 인가? (user 만 답할 수 있음)
+   - **결정**: 미확정. T-004 구현 첫 스텝으로 확인. OFF 면 ON + 재부팅 (일회성).
 2. **Phase 2 인증 체계**: self-signed CA + 내부 계정 분리로 충분? / 외부 IdP 연동까지 가야 하는가?
+   - **결정**: self-signed CA + 백엔드 전용 계정. 외부 IdP 는 운영 규모 확대 시 (현재 admin = 1 명).
 3. **Snapshot 백업을 이 스펙 안에 포함 (Phase 3) 시킬지, T-043 (pg_dump + MinIO 백업) 과 병행 이슈로 분리할지**
+   - **결정**: 이 스펙에 포함 (T-004 후속 PR). T-043 백업은 이미 머지됐으니 그쪽 yaml 수정 PR 형태로. **R2 는 SSE-S3 가 default ON** 이라 확인만으로 끝날 가능성.
 4. **기존 인덱스 데이터 재인덱싱 필요 여부**: Security 활성화 자체는 재인덱싱 불필요. TLS 활성화도 disk layout 변경 없음. → 사실 무손실 마이그레이션 가능.
+   - **결정**: Security/TLS 자체는 재인덱싱 불필요. **단 §8 의 `hashed_resident_id` 도입은 reindex 1 회 필요** (Phase 2 작업과 같이 진행하면 자연스러움).
 
 ---
 
@@ -128,6 +132,8 @@ backend 계정 권한: `face_embeddings` 인덱스에 read/write/delete. 다른 
 - 서브 이슈 b: OpenSearch Security 플러그인 활성화 + 계정 생성 + k8s yaml 업데이트
 - 서브 이슈 c: backend `opensearch_service.py` SSL/auth 적용 + SealedSecret 추가
 - 서브 이슈 d: 기존 인덱스 smoke test (재인덱싱 불필요한지 확인)
+- 서브 이슈 e: `hashed_resident_id` 마이그레이션 (§8) — 인덱스 reindex 1 회 + backend 인덱싱/조회 코드 hash 적용 + `opensearch_link_key` SealedSecret 신규 추가
+- 서브 이슈 f: R2 SSE 활성화 확인 (default ON 가정, 명시적 검증 1 회) — Phase 3
 
 ---
 
@@ -141,10 +147,76 @@ backend 계정 권한: `face_embeddings` 인덱스에 read/write/delete. 다른 
 
 ---
 
-## 결정 요약 (user 에게 질문)
+## 8. 결합공격 차단 — `hashed_resident_id` 도입
 
-1. **맥미니 FileVault 현재 상태?** (ON/OFF)
-2. **Phase 2 규모 OK?** — self-signed CA, OpenSearch Security 활성화, backend 전용 계정. 한 PR 에 담기엔 크니 서브 이슈로 쪼개서 진행.
-3. **Phase 3 (snapshot 백업 암호화) 를 이 이슈에 넣을지, T-043 과 묶을지**
+Phase 1+2+3 만으론 **OpenSearch 단독 dump 가 유출됐을 때** "어떤 vector 가 누구 얼굴인지" 가 그대로 노출된다. vector 자체는 평문이지만 *식별 연결고리* 는 더 끊을 수 있다.
 
-결정 나면 서브 이슈 분할 + 구현 착수.
+### 8-1. 변경 내용
+
+현재 `face_embeddings` 인덱스:
+- `embedding`: [512 floats]
+- `photo_id`: int
+- `resident_id`: int  ← **DB 의 PK 그대로**
+- `facility_id`: int
+
+변경 후:
+- `embedding`: [512 floats]
+- `photo_id`: int
+- `resident_id_hash`: str  ← `HMAC-SHA256(opensearch_link_key, resident_id)`
+- `facility_id`: int
+
+`opensearch_link_key` 는 별도 SealedSecret 에 두고 backend 만 보유.
+
+### 8-2. 효과
+
+- **OpenSearch 단독 침해 시**: vector 와 hash 만 보여서 "누구 얼굴인지" 알 수 없음. 역추적엔 backend DB 까지 추가 침해 + key 까지 필요.
+- **컴플라이언스 항변 강화**: 필드 레벨 암호화 = 기술적 불가능 (kNN 깨짐), 그러나 **결합공격 차단** 으로 등가 보호 달성. KISA 안전성 확보조치 해설서의 "compensating controls" 원칙에 부합.
+
+### 8-3. 구현 부담
+
+- backend 인덱싱 코드: `resident_id` → `hash_resident_id(rid)` 한 줄 변경
+- backend 조회 코드: kNN 결과의 `resident_id_hash` 를 받아 동일 hash 함수로 매칭 (또는 hash → resident_id 역매핑 테이블)
+- 마이그레이션: 기존 인덱스 reindex 1 회 (Phase 2 작업과 같이 진행)
+- SealedSecret 추가: `opensearch_link_key`
+
+### 8-4. 키 관리
+
+| 키                    | 저장 위치             | 회전 주기 | 회전 시 영향                    |
+|-----------------------|------------------------|-----------|----------------------------------|
+| `opensearch_link_key` | SealedSecret (별도)    | 24 개월+  | 회전 시 전체 인덱스 reindex 필요 |
+
+회전 빈도가 낮은 이유: hash 만 깨질 뿐 vector 는 영향 없으나 reindex 비용이 있어 신중하게.
+
+---
+
+## 9. 후속 작업 (launch 후, 별도 이슈로 분할)
+
+본 스펙에 포함하지 않고 별도 이슈로 진행할 추가 방어층. Compliance 항변 단단해지지만 launch blocker 는 아님.
+
+### (b) 임베딩 라이프사이클 정책
+
+- 모델 업데이트 시 전체 임베딩 재생성, 옛 임베딩 즉시 삭제
+- resident 삭제 시 임베딩 즉시 삭제 (현 구현 확인 필요)
+- 분기 1 회 orphan 임베딩 (참조하는 photo/resident 없는 것) 클린업 CronJob
+- **목적**: derived data 의 라이프사이클 관리 흔적 — 컴플라이언스 시 "민감정보 보유 기간 정책" 입증
+- **실행 시점**: 운영 6 개월 후 또는 모델 업데이트 발생 시점
+
+### (c) OpenSearch 인덱스 namespace 격리
+
+- 현재 `senior-album` 네임스페이스에 OpenSearch 가 다른 stateful 서비스 (postgres, minio 등) 와 함께 있음
+- 별도 ns (예: `senior-album-bio`) 로 분리, NetworkPolicy 로 backend 만 접근 가능하게 강제
+- **효과**: 민감정보 격리 입증 + RBAC 분리 (admin 권한 작업 시 폭발 반경 축소)
+- **선행 의존**: T-053 (CNI Calico 전환 — NetworkPolicy 가 실제로 작동하게)
+- **실행 시점**: T-053 완료 후. 클러스터 재생성 작업과 자연스럽게 묶임.
+
+---
+
+## 결정 요약 (확정 — 2026-04-27)
+
+1. **맥미니 FileVault 현재 상태**: T-004 구현 첫 스텝에서 확인. OFF 면 ON + 재부팅 (일회성).
+2. **Phase 2 규모**: self-signed CA + OpenSearch Security + backend 전용 계정. 서브 이슈 b/c/d 로 분할 후 구현.
+3. **Phase 3 (snapshot 암호화)**: 이 스펙에 포함 (서브 이슈 f). R2 SSE-S3 가 default ON 이라 확인만으로 끝날 가능성.
+4. **`hashed_resident_id` 도입 (§8)**: T-004 본체에 포함 (서브 이슈 e). Phase 2 작업 시 reindex 1 회 필요.
+5. **(b) 임베딩 라이프사이클, (c) namespace 격리 (§9)**: 후속 작업. launch 후 별도 이슈로.
+
+서브 이슈 분할 후 구현 착수.
