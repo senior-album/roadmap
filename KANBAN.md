@@ -13,7 +13,7 @@
 
 - [ ] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
 - [ ] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
-- [ ] **T-003** Resident PII (`birth_date`, `phone`, `medical_notes`) pgcrypto AES-256 암호화 + blind index `[area:security]`
+- [ ] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
 - [ ] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
 - [ ] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
 - [ ] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
