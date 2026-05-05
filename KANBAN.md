@@ -91,7 +91,7 @@
 - [ ] **T-121** 백업 복구 리허설 분기 1회 `[area:ops]`
 - [ ] **T-122** OpenTelemetry 자동 계측 + Grafana Cloud 무료 티어 `[area:ops]`
 - [ ] **T-123** 구조화 로그 (JSON logging) 전환 `[area:ops]`
-- [ ] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
+- [x] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
 - [ ] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [ ] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 
