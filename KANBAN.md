@@ -11,17 +11,17 @@
 
 ### security (11)
 
-- [ ] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
-- [ ] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
+- [x] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
+- [x] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
 - [ ] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
 - [ ] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
-- [ ] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
-- [ ] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
-- [ ] **T-007** 업로드·공유링크·얼굴매칭 엔드포인트 rate limit 추가 `[area:security]`
-- [ ] **T-008** 공유 링크 토큰 `secrets.token_urlsafe(32)` 통일 + 만료 검증 감사 `[area:security]`
-- [ ] **T-009** JWT_EXPIRE_MINUTES 60 축소 + refresh 토큰 구조 설계 `[area:security]`
-- [ ] **T-010** CORS `allow_methods`/`allow_headers` 명시적 화이트리스트 `[area:security]`
-- [ ] **T-011** Presigned URL(1h) vs `share_expires_at`(72h) 정책 통일 — 접근 시 매회 재발급 `[area:security]`
+- [x] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
+- [x] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
+- [x] **T-007** 업로드·공유링크·얼굴매칭 엔드포인트 rate limit 추가 `[area:security]`
+- [x] **T-008** 공유 링크 토큰 `secrets.token_urlsafe(32)` 통일 + 만료 검증 감사 `[area:security]`
+- [x] **T-009** JWT_EXPIRE_MINUTES 60 축소 + refresh 토큰 구조 설계 `[area:security]`
+- [x] **T-010** CORS `allow_methods`/`allow_headers` 명시적 화이트리스트 `[area:security]`
+- [x] **T-011** Presigned URL(1h) vs `share_expires_at`(72h) 정책 통일 — 접근 시 매회 재발급 `[area:security]`
 
 ---
 
