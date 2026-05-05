@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**92개 할일** · P0(11) · P1(28) · P2(35) · P3(18)
+**93개 할일** · P0(11) · P1(28) · P2(36) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -96,18 +96,19 @@
 - [ ] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 - [ ] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
 
-### product (10)
+### product (11)
 
 - [ ] **T-140** 시설 관리자 모바일 앱 경량 버전 (현장 업로드) `[area:product]`
 - [ ] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]`
 - [ ] **T-142** CSAT/NPS 수집 — Google Form 지원티켓 종료 시 자동 발송 `[area:product]`
-- [ ] **T-143** 월간 시설별 사용 지표 자동 메일 발송 `[area:product]`
+- [ ] **T-143** 시설 사용 지표 트렌드 그래프 페이지 (월별 업로드/매칭률/보호자 활동, T-150 권한 게이트) `[area:product]`
 - [x] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
 - [x] **T-145** 운영자 어드민 — 전체 시설 관리 (목록 + 직원/입소자/사진 수, 시설 생성·수정. hard delete 미포함) `[area:product]`
 - [x] **T-146** 운영자 어드민 — 보호자 승인 현황 전체 시설 across 뷰 (시설/상태 필터) `[area:product]`
 - [x] **T-147** 운영자 어드민 — 사진 처리 큐 모니터링 (PhotoProcessingJob 상태/실패 retry) `[area:product]`
 - [x] **T-148** 운영자 어드민 — 통계 대시보드 (시설/유저/사진/매칭률 카드 + 최근 가입·업로드 추세) `[area:product]`
 - [x] **T-149** 보호자 초대 채널 정비 — "전화번호" → "문자메시지" 라벨 변경 + "가입 회원 초대" 신설 (회원 검색 → 인앱 알림 → 자동 Guardian 등록) `[area:product]`
+- [ ] **T-150** 시설 직원 메뉴 권한 위임 인프라 — UserPermission 모델 + permission_key 카탈로그 + 시설장 토글 UI + `require_permission` 의존성 `[area:product]`
 
 ### biz (6)
 
@@ -180,11 +181,11 @@
 |---|---:|---:|---:|---:|---:|
 | security | 11 | 6 | 8 | 4 | **29** |
 | ops | 0 | 7 | 8 | 1 | **16** |
-| product | 0 | 3 | 10 | 5 | **18** |
+| product | 0 | 3 | 11 | 5 | **19** |
 | biz | 0 | 7 | 6 | 0 | **13** |
 | legal | 0 | 5 | 3 | 4 | **12** |
 | funding/hiring | 0 | 0 | 0 | 4 | **4** |
-| **합계** | **11** | **28** | **35** | **18** | **92** |
+| **합계** | **11** | **28** | **36** | **18** | **93** |
 
 ---
 
