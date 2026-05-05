@@ -13,7 +13,7 @@
 
 - [x] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
 - [x] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
-- [ ] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
+- [x] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
 - [x] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
 - [x] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
 - [x] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
@@ -48,8 +48,8 @@
 - [x] **T-042** Loki + Grafana 로그 수집 + 일 1회 S3/R2 export 7일 보관 `[area:ops]`
 - [x] **T-043** PostgreSQL `pg_dump` 일 1회 CronJob → Cloudflare R2 업로드 `[area:ops]`
 - [x] **T-044** MinIO 업로드 사진 `mc mirror` CronJob 백업 `[area:ops]`
-- [ ] **T-045** 런북 4종 작성 (맥미니 재부팅 / DB 복구 / 빌드 실패 롤백 / 인증서 만료) `[area:ops]`
-- [ ] **T-046** SLO 내부 문서화 (가동률 99.0%, 응답 <500ms, RTO 4h, RPO 24h) `[area:ops]`
+- [x] **T-045** 런북 4종 작성 (맥미니 재부팅 / DB 복구 / 빌드 실패 롤백 / 인증서 만료) `[area:ops]`
+- [x] **T-046** SLO 내부 문서화 (가동률 99.0%, 응답 <500ms, RTO 4h, RPO 24h) `[area:ops]`
 
 ### security (6)
 
@@ -76,23 +76,23 @@
 
 ### security (8)
 
-- [ ] **T-100** 업로드 경로 Path Traversal 방지 (`storage.py::upload_file`에서 `facility_id` sanitize) `[area:security]`
-- [ ] **T-101** PhotoAuditLog 범위 확대 — 조회·다운로드·공유링크 사용 `[area:security]`
-- [ ] **T-102** 관리자 특권 행위 감사 로그 (보호자 승인, 입소자 삭제) `[area:security]`
-- [ ] **T-103** 로그에서 PII(email·resident name) 마스킹 `[area:security]`
-- [ ] **T-104** 500 에러 응답 스택트레이스 누출 방지 + DEBUG 프로덕션 off `[area:security]`
-- [ ] **T-105** `verify_facility_access` JWT만 신뢰 X, DB 실시간 재검증 `[area:security]`
-- [ ] **T-106** 얼굴 인식 워커 job queue 길이 제한 `[area:security]`
-- [ ] **T-107** OpenSearch kNN 쿼리 `size` 상한 + 페이지네이션 `[area:security]`
+- [x] **T-100** 업로드 경로 Path Traversal 방지 (`storage.py::upload_file`에서 `facility_id` sanitize) `[area:security]`
+- [x] **T-101** PhotoAuditLog 범위 확대 — 조회·다운로드·공유링크 사용 `[area:security]`
+- [x] **T-102** 관리자 특권 행위 감사 로그 (보호자 승인, 입소자 삭제) `[area:security]`
+- [x] **T-103** 로그에서 PII(email·resident name) 마스킹 `[area:security]`
+- [x] **T-104** 500 에러 응답 스택트레이스 누출 방지 + DEBUG 프로덕션 off `[area:security]`
+- [x] **T-105** `verify_facility_access` JWT만 신뢰 X, DB 실시간 재검증 `[area:security]`
+- [x] **T-106** 얼굴 인식 워커 job queue 길이 제한 `[area:security]`
+- [x] **T-107** OpenSearch kNN 쿼리 `size` 상한 + 페이지네이션 `[area:security]`
 
 ### ops (7)
 
-- [ ] **T-120** Alembic 도입 → `DDL_AUTO=create` / `_add_missing_columns` 제거 + CI `alembic upgrade head` `[area:ops]`
+- [x] **T-120** Alembic 도입 → `DDL_AUTO=create` / `_add_missing_columns` 제거 + CI `alembic upgrade head` `[area:ops]`
 - [ ] **T-121** 백업 복구 리허설 분기 1회 `[area:ops]`
 - [ ] **T-122** OpenTelemetry 자동 계측 + Grafana Cloud 무료 티어 `[area:ops]`
-- [ ] **T-123** 구조화 로그 (JSON logging) 전환 `[area:ops]`
+- [x] **T-123** 구조화 로그 (JSON logging) 전환 `[area:ops]`
 - [x] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
-- [ ] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
+- [x] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [ ] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 
 ### product (10)
@@ -101,11 +101,11 @@
 - [ ] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]`
 - [ ] **T-142** CSAT/NPS 수집 — Google Form 지원티켓 종료 시 자동 발송 `[area:product]`
 - [ ] **T-143** 월간 시설별 사용 지표 자동 메일 발송 `[area:product]`
-- [ ] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
-- [ ] **T-145** 운영자 어드민 — 전체 시설 관리 (목록 + 직원/입소자/사진 수, 시설 생성·수정. hard delete 미포함) `[area:product]`
-- [ ] **T-146** 운영자 어드민 — 보호자 승인 현황 전체 시설 across 뷰 (시설/상태 필터) `[area:product]`
-- [ ] **T-147** 운영자 어드민 — 사진 처리 큐 모니터링 (PhotoProcessingJob 상태/실패 retry) `[area:product]`
-- [ ] **T-148** 운영자 어드민 — 통계 대시보드 (시설/유저/사진/매칭률 카드 + 최근 가입·업로드 추세) `[area:product]`
+- [x] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
+- [x] **T-145** 운영자 어드민 — 전체 시설 관리 (목록 + 직원/입소자/사진 수, 시설 생성·수정. hard delete 미포함) `[area:product]`
+- [x] **T-146** 운영자 어드민 — 보호자 승인 현황 전체 시설 across 뷰 (시설/상태 필터) `[area:product]`
+- [x] **T-147** 운영자 어드민 — 사진 처리 큐 모니터링 (PhotoProcessingJob 상태/실패 retry) `[area:product]`
+- [x] **T-148** 운영자 어드민 — 통계 대시보드 (시설/유저/사진/매칭률 카드 + 최근 가입·업로드 추세) `[area:product]`
 - [x] **T-149** 보호자 초대 채널 정비 — "전화번호" → "문자메시지" 라벨 변경 + "가입 회원 초대" 신설 (회원 검색 → 인앱 알림 → 자동 Guardian 등록) `[area:product]`
 
 ### biz (6)
