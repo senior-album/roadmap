@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**91개 할일** · P0(11) · P1(28) · P2(34) · P3(18)
+**92개 할일** · P0(11) · P1(28) · P2(35) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -85,7 +85,7 @@
 - [x] **T-106** 얼굴 인식 워커 job queue 길이 제한 `[area:security]`
 - [x] **T-107** OpenSearch kNN 쿼리 `size` 상한 + 페이지네이션 `[area:security]`
 
-### ops (7)
+### ops (8)
 
 - [x] **T-120** Alembic 도입 → `DDL_AUTO=create` / `_add_missing_columns` 제거 + CI `alembic upgrade head` `[area:ops]`
 - [ ] **T-121** 백업 복구 리허설 분기 1회 `[area:ops]`
@@ -94,6 +94,7 @@
 - [x] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
 - [x] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [ ] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
+- [ ] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
 
 ### product (10)
 
@@ -167,12 +168,12 @@
 | 영역 | P0 | P1 | P2 | P3 | 합계 |
 |---|---:|---:|---:|---:|---:|
 | security | 11 | 6 | 8 | 4 | **29** |
-| ops | 0 | 7 | 7 | 1 | **15** |
+| ops | 0 | 7 | 8 | 1 | **16** |
 | product | 0 | 3 | 10 | 5 | **18** |
 | biz | 0 | 7 | 6 | 0 | **13** |
 | legal | 0 | 5 | 3 | 4 | **12** |
 | funding/hiring | 0 | 0 | 0 | 4 | **4** |
-| **합계** | **11** | **28** | **34** | **18** | **91** |
+| **합계** | **11** | **28** | **35** | **18** | **92** |
 
 ---
 
