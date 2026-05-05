@@ -14,7 +14,7 @@
 - [x] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
 - [x] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
 - [ ] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
-- [ ] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
+- [x] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
 - [x] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
 - [x] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
 - [x] **T-007** 업로드·공유링크·얼굴매칭 엔드포인트 rate limit 추가 `[area:security]`
@@ -39,25 +39,25 @@
 
 - [x] **T-030** 입소자 CSV 엑셀 일괄 import (100명 단위, 주민번호 뒷자리 생략 템플릿) `[area:product]`
 - [x] **T-031** 시설장 관리자 대시보드 강화 — 초대 현황, 미연결 어르신, 미처리 사진, 얼굴 미등록 경고 `[area:product]`
-- [ ] **T-032** 보호자 초대 QR 포스터 PDF 자동 생성 `[area:product]`
+- [x] **T-032** 보호자 초대 QR 포스터 PDF 자동 생성 `[area:product]`
 
 ### ops (7)
 
-- [ ] **T-040** Uptime Kuma 셀프호스트 + 4개 서비스 ping (frontend/backend/argocd/cloudflared) `[area:ops]`
+- [x] **T-040** Uptime Kuma 셀프호스트 + 4개 서비스 ping (frontend/backend/argocd/cloudflared) `[area:ops]`
 - [ ] **T-041** Telegram/카카오 봇 장애 알림 연결 `[area:ops]`
-- [ ] **T-042** Loki + Grafana 로그 수집 + 일 1회 S3/R2 export 7일 보관 `[area:ops]`
-- [ ] **T-043** PostgreSQL `pg_dump` 일 1회 CronJob → Cloudflare R2 업로드 `[area:ops]`
-- [ ] **T-044** MinIO 업로드 사진 `mc mirror` CronJob 백업 `[area:ops]`
+- [x] **T-042** Loki + Grafana 로그 수집 + 일 1회 S3/R2 export 7일 보관 `[area:ops]`
+- [x] **T-043** PostgreSQL `pg_dump` 일 1회 CronJob → Cloudflare R2 업로드 `[area:ops]`
+- [x] **T-044** MinIO 업로드 사진 `mc mirror` CronJob 백업 `[area:ops]`
 - [ ] **T-045** 런북 4종 작성 (맥미니 재부팅 / DB 복구 / 빌드 실패 롤백 / 인증서 만료) `[area:ops]`
 - [ ] **T-046** SLO 내부 문서화 (가동률 99.0%, 응답 <500ms, RTO 4h, RPO 24h) `[area:ops]`
 
 ### security (6)
 
-- [ ] **T-050** Sealed Secrets controller 설치 + 모든 secret 매니페스트 마이그레이션 `[area:security]`
-- [ ] **T-051** 이미지 재인코딩 파이프라인 — thumbnail 생성 시 metadata strip `[area:security]`
+- [x] **T-050** Sealed Secrets controller 설치 + 모든 secret 매니페스트 마이그레이션 `[area:security]`
+- [x] **T-051** 이미지 재인코딩 파이프라인 — thumbnail 생성 시 metadata strip `[area:security]`
 - [ ] **T-052** NetworkPolicy 기본 deny + 허용 서비스만 allow `[area:security]`
-- [ ] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
-- [ ] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
+- [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
+- [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
 - [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
 
 ### biz (7)
