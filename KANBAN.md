@@ -143,7 +143,7 @@
 ### product (5)
 
 - [ ] **T-240** 다국어 지원 (외국인 보호자) `[area:product]`
-- [ ] **T-241** 입소자 안부 일지 (거동·식사) `[area:product]`
+- [x] **T-241** 입소자 안부 일지 (거동·식사) `[area:product]` (album-backend#109, album-frontend#53)
 - [ ] **T-242** 보호자 간 메시지 기능 `[area:product]`
 - [ ] **T-243** 이벤트 캘린더 (생신·외출·면회) `[area:product]`
 - [ ] **T-244** 이지케어·케어포 API 연동 제휴 `[area:product]` `[area:biz]`
@@ -169,9 +169,10 @@
 근거: 운영 중 발견된 버그·UX 개선·작은 enhancement. 보고서 기반 90개 외 트랙으로
 관리하며, 통계표에는 포함하지 않는다.
 
-### product (1)
+### product (2)
 
 - [x] **T-301** 보호자 갤러리 사진 확대보기(라이트박스) — 좌우 키/버튼 + 줌 + ESC `[area:product]` (album-frontend#51)
+- [x] **T-302** 보호자 라이트박스 마우스 휠로 이전/다음 사진 이동 `[area:product]` (album-frontend#52)
 
 ---
 
