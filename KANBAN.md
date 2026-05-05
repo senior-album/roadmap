@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**85개 할일** · P0(11) · P1(28) · P2(28) · P3(18)
+**90개 할일** · P0(11) · P1(28) · P2(33) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -95,12 +95,17 @@
 - [ ] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [ ] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 
-### product (4)
+### product (9)
 
 - [ ] **T-140** 시설 관리자 모바일 앱 경량 버전 (현장 업로드) `[area:product]`
 - [ ] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]`
 - [ ] **T-142** CSAT/NPS 수집 — Google Form 지원티켓 종료 시 자동 발송 `[area:product]`
 - [ ] **T-143** 월간 시설별 사용 지표 자동 메일 발송 `[area:product]`
+- [ ] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
+- [ ] **T-145** 운영자 어드민 — 전체 시설 관리 (목록 + 직원/입소자/사진 수, 시설 생성·수정. hard delete 미포함) `[area:product]`
+- [ ] **T-146** 운영자 어드민 — 보호자 승인 현황 전체 시설 across 뷰 (시설/상태 필터) `[area:product]`
+- [ ] **T-147** 운영자 어드민 — 사진 처리 큐 모니터링 (PhotoProcessingJob 상태/실패 retry) `[area:product]`
+- [ ] **T-148** 운영자 어드민 — 통계 대시보드 (시설/유저/사진/매칭률 카드 + 최근 가입·업로드 추세) `[area:product]`
 
 ### biz (6)
 
@@ -162,11 +167,11 @@
 |---|---:|---:|---:|---:|---:|
 | security | 11 | 6 | 8 | 4 | **29** |
 | ops | 0 | 7 | 7 | 1 | **15** |
-| product | 0 | 3 | 4 | 5 | **12** |
+| product | 0 | 3 | 9 | 5 | **17** |
 | biz | 0 | 7 | 6 | 0 | **13** |
 | legal | 0 | 5 | 3 | 4 | **12** |
 | funding/hiring | 0 | 0 | 0 | 4 | **4** |
-| **합계** | **11** | **28** | **28** | **18** | **85** |
+| **합계** | **11** | **28** | **33** | **18** | **90** |
 
 ---
 
