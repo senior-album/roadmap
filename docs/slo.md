@@ -112,7 +112,7 @@ Cloudflare edge 캐시 덕에 origin 장애 중에도 일부 응답 가능 — b
 | 외형 HTTP 모니터     | 없음              | Uptime Kuma 4개 모니터                | T-040     |
 | 로그 수집            | `kubectl logs` 만 | Loki + Promtail                       | T-042     |
 | 메트릭 / APM         | 없음              | OpenTelemetry + Grafana Cloud         | T-122     |
-| 알림 채널            | 없음              | Telegram/카카오 봇                    | T-041     |
+| 알림 채널            | ✅ Discord 웹훅   | (Uptime Kuma 외형 + 백엔드 영구 실패) | T-041     |
 | 구조화 로그          | ✅ (T-123)        | Loki json stage 로 label 추출          | (완료)    |
 
 위 중 어느 하나라도 미구현 상태에선 해당 SLI 를 "수동 관측" 으로 취급. 자동 위반 감지 전까진 이 SLO 는 운영 체크리스트 수준.

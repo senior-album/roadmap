@@ -44,7 +44,7 @@
 ### ops (7)
 
 - [x] **T-040** Uptime Kuma 셀프호스트 + 4개 서비스 ping (frontend/backend/argocd/cloudflared) `[area:ops]`
-- [ ] **T-041** Telegram/카카오 봇 장애 알림 연결 `[area:ops]`
+- [x] **T-041** Discord 웹훅 장애 알림 연결 (Uptime Kuma + 백엔드 photo_worker 영구 실패) `[area:ops]`
 - [x] **T-042** Loki + Grafana 로그 수집 + 일 1회 S3/R2 export 7일 보관 `[area:ops]`
 - [x] **T-043** PostgreSQL `pg_dump` 일 1회 CronJob → Cloudflare R2 업로드 `[area:ops]`
 - [x] **T-044** MinIO 업로드 사진 `mc mirror` CronJob 백업 `[area:ops]`
