@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**96개 할일** · P0(11) · P1(28) · P2(39) · P3(18)
+**97개 할일** · P0(11) · P1(28) · P2(40) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -87,7 +87,7 @@
 - [x] **T-106** 얼굴 인식 워커 job queue 길이 제한 `[area:security]`
 - [x] **T-107** OpenSearch kNN 쿼리 `size` 상한 + 페이지네이션 `[area:security]`
 
-### ops (11)
+### ops (12)
 
 - [x] **T-120** Alembic 도입 → `DDL_AUTO=create` / `_add_missing_columns` 제거 + CI `alembic upgrade head` `[area:ops]`
 - [ ] **T-121** 백업 복구 리허설 분기 1회 `[area:ops]`
@@ -100,6 +100,7 @@
 - [x] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]` (album-backend#115)
 - [x] **T-129** ArgoCD Notifications → Discord 푸시 (sync started/succeeded/failed, OutOfSync 5min, Degraded). T-041 따라가는 follow-up — Kuma 의 HTTP up/down 으론 sync 결과 검증 불가. `[area:ops]` (album-deploy#24, album-deploy#26)
 - [ ] **T-130** backup CronJob (`minio-backup` / `postgres-backup`) 의 `mc mb --ignore-existing` 호출 제거 — R2 object-only 토큰이라 Access Denied 로 5일째 매일 backup 실패. T-129 가 처음 노출시킨 사고. T-043/T-044 follow-up. `[area:ops]`
+- [ ] **T-131** `cloudflared-secret` SealedSecret 재봉인 — 셋업 당시 평문 Secret 이 SealedSecret 보다 늦게 apply 돼서 ownership 못 잡혔고, unseal 결과가 cluster 실사용 token 과 달라 cloudflared pod 재시작 시 사이트 다운 위험. 백업 token 재봉인. T-130 검증 중 발견. `[area:ops]` `[area:security]`
 
 ### product (11)
 
@@ -186,12 +187,12 @@
 | 영역 | P0 | P1 | P2 | P3 | 합계 |
 |---|---:|---:|---:|---:|---:|
 | security | 11 | 6 | 8 | 4 | **29** |
-| ops | 0 | 7 | 11 | 1 | **19** |
+| ops | 0 | 7 | 12 | 1 | **20** |
 | product | 0 | 3 | 11 | 5 | **19** |
 | biz | 0 | 7 | 6 | 0 | **13** |
 | legal | 0 | 5 | 3 | 4 | **12** |
 | funding/hiring | 0 | 0 | 0 | 4 | **4** |
-| **합계** | **11** | **28** | **39** | **18** | **96** |
+| **합계** | **11** | **28** | **40** | **18** | **97** |
 
 ---
 
