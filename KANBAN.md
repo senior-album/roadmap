@@ -148,7 +148,7 @@
 - [ ] **T-240** 다국어 지원 (외국인 보호자) `[area:product]`
 - [x] **T-241** 입소자 안부 일지 (거동·식사) `[area:product]` (album-backend#109, album-frontend#53)
 - [ ] ~~**T-242** 보호자 간 메시지 기능~~ `[area:product]` `[wontfix]` — 외부 메신저(카톡 등)로 대체 가능, WS/푸시 인프라 ROI 부족
-- [x] **T-243** 이벤트 캘린더 (생신·외출, 면회 제외) `[area:product]` (album-backend#119)
+- [x] **T-243** 이벤트 캘린더 (생신·외출, 면회 제외) `[area:product]` (album-backend#119, album-frontend#59, album-backend#120, album-deploy#22)
 - [ ] **T-244** 이지케어·케어포 API 연동 제휴 `[area:product]` `[area:biz]`
 
 ### funding / hiring (4)
