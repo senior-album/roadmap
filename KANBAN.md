@@ -59,7 +59,7 @@
 - [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
 - [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
 - [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
-- [ ] **T-056** 직원 가입 승인 게이트 — register_staff 자동 활성화 차단, 시설장(또는 `facility:staff:approve` 위임) 승인 필요. 거부는 soft delete (재신청 차단) `[area:security]`
+- [x] **T-056** 직원 가입 승인 게이트 — register_staff 자동 활성화 차단, 시설장(또는 `facility:staff:approve` 위임) 승인 필요. 거부는 soft delete (재신청 차단) `[area:security]` (album-backend#118, album-frontend#58)
 
 ### biz (7)
 
@@ -96,7 +96,7 @@
 - [x] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [x] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 - [x] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
-- [ ] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]`
+- [x] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]` (album-backend#115)
 - [ ] **T-129** ArgoCD Notifications → Discord 푸시 (sync started/succeeded/failed, OutOfSync 5min, Degraded). T-041 따라가는 follow-up — Kuma 의 HTTP up/down 으론 sync 결과 검증 불가. `[area:ops]`
 
 ### product (11)
@@ -104,14 +104,14 @@
 - [ ] **T-140** 시설 관리자 모바일 앱 경량 버전 (현장 업로드) `[area:product]`
 - [ ] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]`
 - [ ] **T-142** CSAT/NPS 수집 — Google Form 지원티켓 종료 시 자동 발송 `[area:product]`
-- [ ] **T-143** 시설 사용 지표 트렌드 그래프 페이지 (월별 업로드/매칭률/보호자 활동, T-150 권한 게이트) `[area:product]`
+- [x] **T-143** 시설 사용 지표 트렌드 그래프 페이지 (월별 업로드/매칭률/보호자 활동, T-150 권한 게이트) `[area:product]` (album-backend#114, album-frontend#57)
 - [x] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
 - [x] **T-145** 운영자 어드민 — 전체 시설 관리 (목록 + 직원/입소자/사진 수, 시설 생성·수정. hard delete 미포함) `[area:product]`
 - [x] **T-146** 운영자 어드민 — 보호자 승인 현황 전체 시설 across 뷰 (시설/상태 필터) `[area:product]`
 - [x] **T-147** 운영자 어드민 — 사진 처리 큐 모니터링 (PhotoProcessingJob 상태/실패 retry) `[area:product]`
 - [x] **T-148** 운영자 어드민 — 통계 대시보드 (시설/유저/사진/매칭률 카드 + 최근 가입·업로드 추세) `[area:product]`
 - [x] **T-149** 보호자 초대 채널 정비 — "전화번호" → "문자메시지" 라벨 변경 + "가입 회원 초대" 신설 (회원 검색 → 인앱 알림 → 자동 Guardian 등록) `[area:product]`
-- [ ] **T-150** 시설 직원 메뉴 권한 위임 인프라 — UserPermission 모델 + permission_key 카탈로그 + 시설장 토글 UI + `require_permission` 의존성 `[area:product]`
+- [x] **T-150** 시설 직원 메뉴 권한 위임 인프라 — UserPermission 모델 + permission_key 카탈로그 + 시설장 토글 UI + `require_permission` 의존성 `[area:product]` (album-backend#111, album-backend#113, album-frontend#54)
 
 ### biz (6)
 
