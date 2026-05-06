@@ -51,7 +51,7 @@
 - [x] **T-045** 런북 4종 작성 (맥미니 재부팅 / DB 복구 / 빌드 실패 롤백 / 인증서 만료) `[area:ops]`
 - [x] **T-046** SLO 내부 문서화 (가동률 99.0%, 응답 <500ms, RTO 4h, RPO 24h) `[area:ops]`
 
-### security (6)
+### security (7)
 
 - [x] **T-050** Sealed Secrets controller 설치 + 모든 secret 매니페스트 마이그레이션 `[area:security]`
 - [x] **T-051** 이미지 재인코딩 파이프라인 — thumbnail 생성 시 metadata strip `[area:security]`
@@ -59,6 +59,7 @@
 - [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
 - [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
 - [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
+- [ ] **T-056** 직원 가입 승인 게이트 — register_staff 자동 활성화 차단, 시설장(또는 `facility:staff:approve` 위임) 승인 필요. 거부는 soft delete (재신청 차단) `[area:security]`
 
 ### biz (7)
 
