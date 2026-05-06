@@ -98,7 +98,7 @@
 - [x] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
 - [x] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
 - [x] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]` (album-backend#115)
-- [ ] **T-129** ArgoCD Notifications → Discord 푸시 (sync started/succeeded/failed, OutOfSync 5min, Degraded). T-041 따라가는 follow-up — Kuma 의 HTTP up/down 으론 sync 결과 검증 불가. `[area:ops]`
+- [x] **T-129** ArgoCD Notifications → Discord 푸시 (sync started/succeeded/failed, OutOfSync 5min, Degraded). T-041 따라가는 follow-up — Kuma 의 HTTP up/down 으론 sync 결과 검증 불가. `[area:ops]` (album-deploy#24, album-deploy#26)
 
 ### product (11)
 
