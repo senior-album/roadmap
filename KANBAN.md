@@ -127,7 +127,7 @@
 
 - [ ] **T-180** 계약 종료 시 데이터 파기 요청 처리 플로우 `[area:legal]`
 - [ ] **T-181** 개인정보 유출 72시간 신고 절차 문서화 `[area:legal]`
-- [ ] **T-182** 로그 보관 기간 정책 + 자동 파기 CronJob `[area:legal]` `[area:ops]`
+- [x] **T-182** 로그 보관 기간 정책 + 자동 파기 CronJob `[area:legal]` `[area:ops]` (album-backend#121, album-deploy#27, roadmap#211)
 
 ---
 
