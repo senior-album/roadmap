@@ -56,7 +56,7 @@
 - [x] **T-050** Sealed Secrets controller 설치 + 모든 secret 매니페스트 마이그레이션 `[area:security]`
 - [x] **T-051** 이미지 재인코딩 파이프라인 — thumbnail 생성 시 metadata strip `[area:security]`
 - [x] **T-052** NetworkPolicy 기본 deny + 허용 서비스만 allow `[area:security]` (album-deploy#10)
-  - [ ] **T-052-1** k3d CNI 교체 (flannel → Calico) — NetworkPolicy 실 enforce 위한 follow-up. runbook: album-deploy#11. (roadmap#158)
+  - [ ] ~~**T-052-1** k3d CNI 교체 (flannel → Calico)~~ `[deferred]` — 클라우드 이관 (T-220) 시 일괄 처리. k3d 단일 노드 재생성 30–60분 다운타임 vs NetworkPolicy enforce ROI 부족. runbook 은 보존: album-deploy `docs/CNI_MIGRATION.md`. (roadmap#158)
 - [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
 - [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
 - [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
