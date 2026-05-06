@@ -1,6 +1,6 @@
 # 로그 보관 기간 정책
 
-**상태**: Phase 1 (정책) 초안. Phase 2 (자동 파기 구현) 별도 이슈로 분리.
+**상태**: Phase 1 (정책) + Phase 2 (DB 자동 파기 구현). Loki retention 은 T-042 PR 에서 이미 적용.
 **관련 이슈**: T-182 (roadmap#67)
 **갱신 주기**: 분기 1회 또는 법령 개정 시.
 
@@ -103,24 +103,38 @@
 | MinIO 미러 (R2)          | **영구**  | 사진 원본이라 삭제는 사용자 요청 시(T-180) 개별 처리 |
 | 인시던트 기록 (`docs/incidents/`) | **5년**   | git history. 수동 보관.                              |
 
+### 2-8. 운영 편의 데이터 (만료/완료된 row)
+
+법정 보관 의무 없음 — 기능 가치가 사라진 row 를 정리하는 카테고리. 인증 토큰은 보안 관점, 그 외는 DB 폭증 방지.
+
+| 테이블                    | 보관 기간 | 근거                                                 |
+|---------------------------|-----------|------------------------------------------------------|
+| `refresh_tokens` (만료된 row) | **즉시 (만료 후 0일)** | 만료된 refresh token 은 인증 가치 0. 즉시 삭제가 보안상 안전 |
+| `photo_shares` (만료된 link) | **30일**  | 만료 후 단기 추적성 (누가 언제 만든 링크였는지) 만 유지 |
+| `photo_processing_jobs` (completed / failed) | **60일** | 큐 추세 분석 끝난 후 가비지. failed 도 60일 안에 운영자가 retry/포기 결정 |
+| `notifications`            | **90일**  | 운영 편의 — 사용자에게 도달한 후 가치 저하. 법적 의무 없음 |
+
 ---
 
-## 3. 파기 방식 (Phase 2 구현 대상)
+## 3. 파기 방식
 
-각 카테고리마다 파기 주체가 다름. Phase 2 에선 아래 각각을 실제로 동작하게 함.
+각 카테고리마다 파기 주체가 다름.
 
-| 카테고리            | 파기 주체                              | 구현 필요도      |
-|---------------------|----------------------------------------|------------------|
-| §2-1, §2-2, §2-3, §2-5 | Loki compactor (retention config)     | 중 — Loki(T-042) 도입 PR 에 포함 |
-| §2-4 audit logs     | postgres DELETE CronJob                 | 저 — 단순 SQL + k8s CronJob |
-| §2-3 refresh_tokens | backend 의 기존 clear 경로 활용 확인     | 저 — 이미 있을 가능성 |
-| §2-7 pg_dump        | T-043 CronJob `mc rm --older-than 14d` | ✅ 이미 구현       |
-| §2-7 MinIO 영구     | 사용자 파기 요청 경로 (T-180)           | 큼 — 별도 이슈    |
+| 카테고리                                           | 파기 주체                                                  | 상태                              |
+|----------------------------------------------------|------------------------------------------------------------|-----------------------------------|
+| §2-1, §2-2, §2-5                                   | Loki compactor (`retention_period` config)                  | ✅ T-042 PR 에서 적용 (Loki 30일)  |
+| §2-3 인증 이벤트 로그                              | Loki compactor (별도 라벨 retention 미적용 — 후속 이슈)      | ⏳ 후속 이슈 (라벨 기반 retention) |
+| §2-3 `refresh_tokens` (만료된 row)                 | backend `app/scripts/purge_expired_logs.py` + k8s CronJob   | ✅ 본 PR (T-182 Phase 2)           |
+| §2-4 `photo_audit_logs` / `admin_audit_logs` (3년) | 동일                                                       | ✅ 본 PR                           |
+| §2-7 pg_dump (R2 14일)                             | T-043 CronJob `mc rm --older-than 14d`                      | ✅ T-043 적용 완료                 |
+| §2-7 MinIO 영구                                    | 사용자 파기 요청 경로 (T-180)                                | ⏳ 별도 이슈 (T-180)                |
+| §2-8 운영 편의 데이터                              | 동일 `purge_expired_logs.py` + CronJob                       | ✅ 본 PR                           |
 
-Phase 2 이슈로 파생:
-- Loki retention 설정 (T-042 PR 에 편입 vs 독립)
-- `audit_logs` cleanup CronJob
-- 파기 실행 로그 (파기 자체도 감사 기록) — `data_purge_logs` 테이블 신설 필요 여부 결정
+본 PR 의 cron 스케줄: 매주 일요일 19:00 UTC (= 월요일 04:00 KST). pg_dump(18:00 UTC) 와 1시간 차이를 둠.
+
+추가 파생 이슈:
+- 인증 이벤트 로그 (§2-3 Loki 1년) — 라벨 기반 retention 분리 필요
+- 파기 실행 자체의 감사 기록 — 본 PR 은 `purge_expired_logs` stdout (Loki 가 잡음) 로 단순화. `data_purge_logs` 테이블 신설은 보류 (over-engineering)
 
 ---
 
