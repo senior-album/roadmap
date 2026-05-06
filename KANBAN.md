@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**94개 할일** · P0(11) · P1(28) · P2(37) · P3(18)
+**95개 할일** · P0(11) · P1(29) · P2(37) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -51,7 +51,7 @@
 - [x] **T-045** 런북 4종 작성 (맥미니 재부팅 / DB 복구 / 빌드 실패 롤백 / 인증서 만료) `[area:ops]`
 - [x] **T-046** SLO 내부 문서화 (가동률 99.0%, 응답 <500ms, RTO 4h, RPO 24h) `[area:ops]`
 
-### security (6)
+### security (7)
 
 - [x] **T-050** Sealed Secrets controller 설치 + 모든 secret 매니페스트 마이그레이션 `[area:security]`
 - [x] **T-051** 이미지 재인코딩 파이프라인 — thumbnail 생성 시 metadata strip `[area:security]`
@@ -59,6 +59,7 @@
 - [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
 - [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
 - [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
+- [ ] **T-056** 직원 가입 승인 게이트 — register_staff 자동 활성화 차단, 시설장(또는 `facility:staff:approve` 위임) 승인 필요. 거부는 soft delete (재신청 차단) `[area:security]`
 
 ### biz (7)
 
@@ -181,13 +182,13 @@
 
 | 영역 | P0 | P1 | P2 | P3 | 합계 |
 |---|---:|---:|---:|---:|---:|
-| security | 11 | 6 | 8 | 4 | **29** |
+| security | 11 | 7 | 8 | 4 | **30** |
 | ops | 0 | 7 | 9 | 1 | **17** |
 | product | 0 | 3 | 11 | 5 | **19** |
 | biz | 0 | 7 | 6 | 0 | **13** |
 | legal | 0 | 5 | 3 | 4 | **12** |
 | funding/hiring | 0 | 0 | 0 | 4 | **4** |
-| **합계** | **11** | **28** | **37** | **18** | **94** |
+| **합계** | **11** | **29** | **37** | **18** | **95** |
 
 ---
 
