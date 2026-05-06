@@ -94,7 +94,7 @@
 - [x] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
 - [x] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
 - [x] **T-126** 업로드 스토리지 PV 전환 (`emptyDir` 제거) `[area:ops]`
-- [ ] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
+- [x] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
 - [ ] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]`
 
 ### product (11)
