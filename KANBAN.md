@@ -59,7 +59,7 @@
   - [ ] ~~**T-052-1** k3d CNI 교체 (flannel → Calico)~~ `[deferred]` — 클라우드 이관 (T-220) 시 일괄 처리. k3d 단일 노드 재생성 30–60분 다운타임 vs NetworkPolicy enforce ROI 부족. runbook 은 보존: album-deploy `docs/CNI_MIGRATION.md`. (roadmap#158)
 - [x] **T-053** Dockerfile 베이스 이미지 digest pin (`python:3.11.9-slim-bookworm@sha256:…`) `[area:security]`
 - [x] **T-054** bcrypt rounds=12 명시 + 로그인 시 점진 재해싱 `[area:security]`
-- [ ] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]`
+- [x] **T-055** JWT_SECRET Sealed Secrets 또는 SOPS+age 관리 + rolling key 구조 `[area:security]` (album-backend#123, album-deploy#32)
 - [x] **T-056** 직원 가입 승인 게이트 — register_staff 자동 활성화 차단, 시설장(또는 `facility:staff:approve` 위임) 승인 필요. 거부는 soft delete (재신청 차단) `[area:security]` (album-backend#118, album-frontend#58)
 
 ### biz (7)
@@ -99,8 +99,8 @@
 - [x] **T-127** Loki/Grafana 운영 가시성 개선 (대시보드 + 레벨 파싱 + 노이즈 필터) `[area:ops]`
 - [x] **T-128** 테스트 envvar 캐싱 회귀 — `RESIDENT_PII_KEK` setdefault 값 표준화 (base64 32B) + `_kek()` lru_cache 우회 fixture `[area:ops]` (album-backend#115)
 - [x] **T-129** ArgoCD Notifications → Discord 푸시 (sync started/succeeded/failed, OutOfSync 5min, Degraded). T-041 따라가는 follow-up — Kuma 의 HTTP up/down 으론 sync 결과 검증 불가. `[area:ops]` (album-deploy#24, album-deploy#26)
-- [ ] **T-130** backup CronJob (`minio-backup` / `postgres-backup`) 의 `mc mb --ignore-existing` 호출 제거 — R2 object-only 토큰이라 Access Denied 로 5일째 매일 backup 실패. T-129 가 처음 노출시킨 사고. T-043/T-044 follow-up. `[area:ops]`
-- [ ] **T-131** `cloudflared-secret` SealedSecret 재봉인 — 셋업 당시 평문 Secret 이 SealedSecret 보다 늦게 apply 돼서 ownership 못 잡혔고, unseal 결과가 cluster 실사용 token 과 달라 cloudflared pod 재시작 시 사이트 다운 위험. 백업 token 재봉인. T-130 검증 중 발견. `[area:ops]` `[area:security]`
+- [x] **T-130** backup CronJob (`minio-backup` / `postgres-backup`) 의 `mc mb --ignore-existing` 호출 제거 — R2 object-only 토큰이라 Access Denied 로 5일째 매일 backup 실패. T-129 가 처음 노출시킨 사고. T-043/T-044 follow-up. `[area:ops]` (album-deploy#28)
+- [x] **T-131** `cloudflared-secret` SealedSecret 재봉인 — 셋업 당시 평문 Secret 이 SealedSecret 보다 늦게 apply 돼서 ownership 못 잡혔고, unseal 결과가 cluster 실사용 token 과 달라 cloudflared pod 재시작 시 사이트 다운 위험. 백업 token 재봉인. T-130 검증 중 발견. `[area:ops]` `[area:security]` (album-deploy#31)
 
 ### product (11)
 
