@@ -187,9 +187,9 @@
 
 ### infra (3)
 
-- [ ] **T-305** Brevo 이메일 인프라 — `notification_service.send_email_notification` 스텁 채움. Brevo HTTP API v3 (영구 무료 일 300통 / 월 ~9000). DNS SPF/DKIM 1회 셋업. 비밀번호 재설정 (T-306) prerequisite. `[area:ops]` `[area:product]`
-- [ ] **T-306** 비밀번호 재설정 (이메일 + SMS) — 사용자 본인 시작 흐름 (`/forgot-password` → 채널 선택 → 토큰 → 새 비번). `PasswordResetToken` 모델 (hash 저장, 30분 TTL, 1회용). T-305 의존. `[area:security]` `[area:product]`
-- [ ] **T-307** 보호자 초대 SMS 자동 발송 (CoolSMS) — T-304 manual_share 위에 자동 발송 레이어. CoolSMS (가입 OTP 와 동일 provider) 가 SMS 채널에서 자동 발송, 실패/미설정 시 manual_share fallback. dead code `biztalk_service.py` 및 `BIZZTALK_*` config / SealedSecret 제거. T-304 follow-up. `[area:backend]` `[area:ops]`
+- [x] **T-305** Brevo 이메일 인프라 — `notification_service.send_email_notification` 스텁 채움. Brevo HTTP API v3 (영구 무료 일 300통 / 월 ~9000). DNS SPF/DKIM 1회 셋업. 비밀번호 재설정 (T-306) prerequisite. `[area:ops]` `[area:product]` (album-backend#128) — 운영 활성화는 별도 (Brevo 계정 + DNS + SealedSecret)
+- [x] **T-306** 비밀번호 재설정 (이메일 + SMS) — 사용자 본인 시작 흐름 (`/forgot-password` → 채널 선택 → 토큰 → 새 비번). `PasswordResetToken` 모델 (hash 저장, 30분 TTL, 1회용). T-305 의존. `[area:security]` `[area:product]` (album-backend#129, album-frontend#63)
+- [x] **T-307** 보호자 초대 SMS 자동 발송 (CoolSMS) — T-304 manual_share 위에 자동 발송 레이어. CoolSMS (가입 OTP 와 동일 provider) 가 SMS 채널에서 자동 발송, 실패/미설정 시 manual_share fallback. dead code `biztalk_service.py` 및 `BIZZTALK_*` config / SealedSecret 제거. T-304 follow-up. `[area:backend]` `[area:ops]` (album-backend#126)
 
 ---
 
