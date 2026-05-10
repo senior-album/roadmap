@@ -105,7 +105,7 @@
 ### product (11)
 
 - [ ] **T-140** 시설 관리자 모바일 앱 경량 버전 (현장 업로드) `[area:product]`
-- [ ] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]`
+- [x] **T-141** 온보딩 체크리스트 자동화 (시설 코드 발급, 브랜딩, 직원 계정) `[area:product]` (album-frontend#60)
 - [ ] **T-142** CSAT/NPS 수집 — Google Form 지원티켓 종료 시 자동 발송 `[area:product]`
 - [x] **T-143** 시설 사용 지표 트렌드 그래프 페이지 (월별 업로드/매칭률/보호자 활동, T-150 권한 게이트) `[area:product]` (album-backend#114, album-frontend#55, album-frontend#57)
 - [x] **T-144** 운영자 어드민 — 전체 유저 관리 (목록/필터/`is_active`·`is_admin`·`is_operator` 토글, `facility_id` 변경, AdminAuditLog 기록) `[area:product]`
