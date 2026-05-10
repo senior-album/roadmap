@@ -181,11 +181,12 @@
 - [x] **T-301** 보호자 갤러리 사진 확대보기(라이트박스) — 좌우 키/버튼 + 줌 + ESC `[area:product]` (album-frontend#51)
 - [x] **T-302** 보호자 라이트박스 마우스 휠로 이전/다음 사진 이동 `[area:product]` (album-frontend#52)
 
-### bug (3)
+### bug (4)
 
 - [x] **T-303** 이벤트 캘린더 메뉴 진입 시 500 에러 — T-243 후속. 사용자 재현 보고. `[area:backend]` `[bug]` (roadmap#218, album-backend#125)
 - [x] **T-304** 보호자 초대 — 문자메시지/이메일 발송 실패 — T-149 후속. 자동 발송 코드 mock/미구현 → manual_share UX (직원이 invite_url 을 본인 SMS/메일/메신저 앱 deeplink 로 직접 공유). T-061 폐기와 함께 처리. `[area:product]` `[bug]` (album-backend#124, album-frontend#62)
 - [ ] **T-308** 사진 다중 업로드 batch 분할 — 30장+ 드래그 시 frontend nginx `client_max_body_size 50M` 초과로 413. `PhotoUploader` 가 선택 파일 전체를 한 multipart 요청으로 보냄 → 5~10장 chunk 로 분할 + 진행률 + 부분 실패 재시도. nginx 한도는 그대로 둠 (CF Tunnel 100MB / 백엔드 메모리 보호). 사용자 재현 보고. `[area:frontend]` `[bug]` (roadmap#232)
+- [ ] **T-309** prod 캘린더에 birthday backfill 미반영 — T-243-4 머지에도 cron 이 옛 코드로 동작. 원인: `album-backend/.github/workflows/ci.yml` 의 image-bump sed 가 `k8s/backend.yaml` 만 갱신, `k8s/backend-birthday-cron.yaml` / `k8s/backend-log-purge-cron.yaml` 의 hardcoded SHA (`d6eb948`, T-182 시점) 는 오래 전부터 stale. 1) album-deploy 의 cron 매니페스트 2개 즉시 SHA bump (`8189762` = 현재 backend.yaml) → ArgoCD sync → cron backfill. 2) album-backend ci.yml 자동화를 `k8s/` 안의 album-backend 이미지 참조 일괄 갱신으로 확장 (album-backend#130 머지 완료). `[area:ops]` `[area:product]` `[bug]`
 
 ### infra (3)
 
