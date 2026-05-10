@@ -65,7 +65,7 @@
 ### biz (7)
 
 - [ ] **T-060** 개인사업자 등록 (매출 8천만원 시 일반과세자 전환 계획) `[area:biz]`
-- [ ] ~~**T-061** 카카오톡 비즈니스 채널 개설 + 알림톡 연동~~ `[area:biz]` `[wontfix]` — 비즈채널 운영 부담 + 대행사 계약비 vs T-304 수동 공유 UX (직원이 invite_url 을 본인 메신저/SMS 로 직접 전달) 가 closed beta 규모에 충분. 시설 수 확장 시 SMTP / transactional email 로 재검토 (별도 티켓).
+- [ ] ~~**T-061** 카카오톡 비즈니스 채널 개설 + 알림톡 연동~~ `[area:biz]` `[wontfix]` — 비즈채널 운영 부담 + 대행사 계약 (NHN Cloud 등) 비용 vs T-304 manual_share UX (deeplink) + T-307 CoolSMS 자동 발송 으로 충분. 알림톡 템플릿 검수 단계 생략. 시설 수 대폭 확장 시 재검토 (별도 티켓).
 - [ ] **T-062** 부모님 시설 케이스 스터디 영상 제작 (시설장 인터뷰) `[area:biz]`
 - [ ] **T-063** 주변 요양시설 10곳 리스트업 + 개별 콜드 메시지 `[area:biz]`
 - [ ] **T-064** 15분 데모 방문 5회 이상 `[area:biz]`
@@ -184,6 +184,12 @@
 
 - [x] **T-303** 이벤트 캘린더 메뉴 진입 시 500 에러 — T-243 후속. 사용자 재현 보고. `[area:backend]` `[bug]` (roadmap#218, album-backend#125)
 - [x] **T-304** 보호자 초대 — 문자메시지/이메일 발송 실패 — T-149 후속. 자동 발송 코드 mock/미구현 → manual_share UX (직원이 invite_url 을 본인 SMS/메일/메신저 앱 deeplink 로 직접 공유). T-061 폐기와 함께 처리. `[area:product]` `[bug]` (album-backend#124, album-frontend#62)
+
+### infra (3)
+
+- [ ] **T-305** Brevo 이메일 인프라 — `notification_service.send_email_notification` 스텁 채움. Brevo HTTP API v3 (영구 무료 일 300통 / 월 ~9000). DNS SPF/DKIM 1회 셋업. 비밀번호 재설정 (T-306) prerequisite. `[area:ops]` `[area:product]`
+- [ ] **T-306** 비밀번호 재설정 (이메일 + SMS) — 사용자 본인 시작 흐름 (`/forgot-password` → 채널 선택 → 토큰 → 새 비번). `PasswordResetToken` 모델 (hash 저장, 30분 TTL, 1회용). T-305 의존. `[area:security]` `[area:product]`
+- [ ] **T-307** 보호자 초대 SMS 자동 발송 (CoolSMS) — T-304 manual_share 위에 자동 발송 레이어. CoolSMS (가입 OTP 와 동일 provider) 가 SMS 채널에서 자동 발송, 실패/미설정 시 manual_share fallback. dead code `biztalk_service.py` 및 `BIZZTALK_*` config / SealedSecret 제거. T-304 follow-up. `[area:backend]` `[area:ops]`
 
 ---
 
