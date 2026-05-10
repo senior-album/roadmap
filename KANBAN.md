@@ -176,10 +176,11 @@
 근거: 운영 중 발견된 버그·UX 개선·작은 enhancement. 보고서 기반 90개 외 트랙으로
 관리하며, 통계표에는 포함하지 않는다.
 
-### product (2)
+### product (3)
 
 - [x] **T-301** 보호자 갤러리 사진 확대보기(라이트박스) — 좌우 키/버튼 + 줌 + ESC `[area:product]` (album-frontend#51)
 - [x] **T-302** 보호자 라이트박스 마우스 휠로 이전/다음 사진 이동 `[area:product]` (album-frontend#52)
+- [ ] **T-310** 사진 업로드 — 선택 즉시 업로드 (확정 버튼 제거). PhotoUploader 의 "선택된 파일" 미리보기 그리드 + "N개 사진 업로드" 버튼 제거. 업로드된 사진은 어차피 `is_public=false` 비공개로 들어가서 직원 publish 토글 전엔 노출 안 됨 → 확정 단계 마찰만 있음. 진행률은 dropzone 자체에 노출. `[area:frontend]` `[ux]` (roadmap#237)
 
 ### bug (4)
 
