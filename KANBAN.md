@@ -182,7 +182,7 @@
 
 ### bug (2)
 
-- [ ] **T-303** 이벤트 캘린더 메뉴 진입 시 500 에러 — T-243 후속. 사용자 재현 보고. `[area:backend]` `[bug]` (roadmap#218)
+- [x] **T-303** 이벤트 캘린더 메뉴 진입 시 500 에러 — T-243 후속. 사용자 재현 보고. `[area:backend]` `[bug]` (roadmap#218, album-backend#125)
 - [x] **T-304** 보호자 초대 — 문자메시지/이메일 발송 실패 — T-149 후속. 자동 발송 코드 mock/미구현 → manual_share UX (직원이 invite_url 을 본인 SMS/메일/메신저 앱 deeplink 로 직접 공유). T-061 폐기와 함께 처리. `[area:product]` `[bug]` (album-backend#124, album-frontend#62)
 
 ---
