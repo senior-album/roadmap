@@ -65,7 +65,7 @@
 ### biz (7)
 
 - [ ] **T-060** 개인사업자 등록 (매출 8천만원 시 일반과세자 전환 계획) `[area:biz]`
-- [ ] ~~**T-061** 카카오톡 비즈니스 채널 개설 + 알림톡 연동~~ `[area:biz]` `[wontfix]` — 비즈채널 운영 부담 + 대행사 계약비 vs T-304 수동 공유 UX (직원이 invite_url 을 본인 메신저/SMS 로 직접 전달) 가 closed beta 규모에 충분. 시설 수 확장 시 SMTP / transactional email 로 재검토 (별도 티켓).
+- [ ] ~~**T-061** 카카오톡 비즈니스 채널 개설 + 알림톡 연동~~ `[area:biz]` `[wontfix]` — 비즈채널 운영 부담 + 대행사 계약 (NHN Cloud 등) 비용 vs CoolSMS 직접 발송 (T-304) 으로 충분. 알림톡 템플릿 검수 단계 생략. 시설 수 대폭 확장 시 재검토 (별도 티켓).
 - [ ] **T-062** 부모님 시설 케이스 스터디 영상 제작 (시설장 인터뷰) `[area:biz]`
 - [ ] **T-063** 주변 요양시설 10곳 리스트업 + 개별 콜드 메시지 `[area:biz]`
 - [ ] **T-064** 15분 데모 방문 5회 이상 `[area:biz]`
@@ -183,7 +183,12 @@
 ### bug (2)
 
 - [ ] **T-303** 이벤트 캘린더 메뉴 진입 시 500 에러 — T-243 후속. 사용자 재현 보고. `[area:backend]` `[bug]` (roadmap#218)
-- [ ] **T-304** 보호자 초대 — 문자메시지/이메일 발송 실패 — T-149 후속. 사용자 재현 보고. `[area:product]` `[bug]` (roadmap#219)
+- [ ] **T-304** 보호자 초대 자동 발송 (CoolSMS) + BizTalk 걷어내기 — `biztalk_service.py` 가 `[MOCK]` 로그만 찍는 상태. CoolSMS 는 가입 OTP 에 이미 연동되어 있으므로 invitation 흐름을 BizTalk → CoolSMS 로 전환. 새 사진 알림 SMS 는 비용 우려로 인앱 only 로 좁힘. T-149 후속, 사용자 재현 보고. `[area:product]` `[area:backend]` (roadmap#219)
+
+### infra (2)
+
+- [ ] **T-305** Brevo 이메일 인프라 — `notification_service.send_email_notification` 스텁 채움. Brevo HTTP API v3 (월 ~9000건 무료 영구). DNS SPF/DKIM 1회 셋업. 비밀번호 재설정 (T-306) prerequisite. `[area:ops]` `[area:product]`
+- [ ] **T-306** 비밀번호 재설정 (이메일 + SMS) — 사용자 본인 시작 흐름 (`/forgot-password` → 채널 선택 → 토큰 → 새 비번). 토큰 hash 저장 30분 TTL 1회용. T-305 의존. `[area:security]` `[area:product]`
 
 ---
 
