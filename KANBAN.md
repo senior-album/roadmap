@@ -181,6 +181,7 @@
 - [x] **T-301** 보호자 갤러리 사진 확대보기(라이트박스) — 좌우 키/버튼 + 줌 + ESC `[area:product]` (album-frontend#51)
 - [x] **T-302** 보호자 라이트박스 마우스 휠로 이전/다음 사진 이동 `[area:product]` (album-frontend#52)
 - [x] **T-311** 사진 업로드 — 선택 즉시 업로드 (확정 버튼 제거). PhotoUploader 의 "선택된 파일" 미리보기 그리드 + "N개 사진 업로드" 버튼 제거. 업로드된 사진은 어차피 `is_public=false` 비공개로 들어가서 직원 publish 토글 전엔 노출 안 됨 → 확정 단계 마찰만 있음. 진행률은 dropzone 자체에 노출. 원래 T-310 으로 채번했으나 동일 시점 backend T-310 (birth_date 버그) 과 번호 충돌 — sweep PR (roadmap#239) 가 backend 만 정리하면서 본 항목이 누락. KANBAN 에서만 T-311 로 재정리, 코드 PR 의 commit 메시지/제목은 T-310 그대로 유지. `[area:frontend]` `[ux]` (roadmap#237, roadmap#238, album-frontend#69)
+- [ ] **T-312** 사진 업로드 진행 중 취소 — 100장 드래그 후 중단 수단 부재. T-311 즉시 업로드 + T-308 chunk 분할 (8장/40MB) 적용 후, `apiClient.uploadPhotos` 가 한 번 시작되면 모든 chunk 가 끝날 때까지 약 1분+ 진행 → 사용자가 잘못 끌었거나 자리 비울 때 정상 종료 못 함. `AbortController`/`AbortSignal` 을 axios chunk 호출에 전파해 즉시 abort, PhotoUploader 진행 표시 옆에 "취소" 버튼 노출. 취소 시 직전까지 업로드된 chunk 사진은 그대로 둠 (백엔드 호출 완료분) — 남은 파일은 "M장 건너뜀" 안내. `[area:frontend]` `[ux]`
 
 ### bug (5)
 
