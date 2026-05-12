@@ -192,11 +192,12 @@
 - [x] **T-309** prod 캘린더에 birthday backfill 미반영 — T-243-4 머지에도 cron 이 옛 코드로 동작. 원인: `album-backend/.github/workflows/ci.yml` 의 image-bump sed 가 `k8s/backend.yaml` 만 갱신, `k8s/backend-birthday-cron.yaml` / `k8s/backend-log-purge-cron.yaml` 의 hardcoded SHA (`d6eb948`, T-182 시점) 는 오래 전부터 stale. ci.yml 자동화를 `k8s/` 안의 album-backend 이미지 참조 일괄 갱신으로 확장 (재발 차단). prod 검증: ArgoCD sync + 1회 backfill job 으로 활성 입소자 birthday event 2건 생성 — 사용자 보고된 10/28 김강남 어르신 캘린더 표시 확인. `[area:ops]` `[area:product]` `[bug]` (album-backend#130, roadmap#234)
 - [x] **T-310** 입소자 `birth_date` 빈 문자열이 그대로 envelope encrypt — 단건 `POST/PUT /residents` 가 `birth_date=""` 를 받으면 `_apply_pii_encryption` 의 `is not None` 가드를 통과해 빈 평문이 AES-GCM 으로 암호화돼 저장 (length=28 = nonce 12 + tag 16 + 0). cron 이 매일 `Invalid isoformat string: ''` decrypt error 띄움 (T-041 Discord 노이즈 위험). prod 활성 입소자 47명 중 3명 영향. fix: `ResidentBase` / `ResidentUpdate` 에 Pydantic `field_validator(mode='before')` 추가해 빈 문자열 → None normalize, `ResidentBase.name` 은 422 거부. prod DB cleanup 3 row 적용 + cron 재실행 `decrypt_errors: 0` 검증. T-309 검증 중 발견. `[area:backend]` `[area:security]` `[bug]` (album-backend#131, roadmap#236)
 
-### infra (3)
+### infra (4)
 
 - [x] **T-305** Brevo 이메일 인프라 — `notification_service.send_email_notification` 스텁 채움. Brevo HTTP API v3 (영구 무료 일 300통 / 월 ~9000). DNS SPF/DKIM 1회 셋업. 비밀번호 재설정 (T-306) prerequisite. `[area:ops]` `[area:product]` (album-backend#128) — 운영 활성화는 별도 (Brevo 계정 + DNS + SealedSecret)
 - [x] **T-306** 비밀번호 재설정 (이메일 + SMS) — 사용자 본인 시작 흐름 (`/forgot-password` → 채널 선택 → 토큰 → 새 비번). `PasswordResetToken` 모델 (hash 저장, 30분 TTL, 1회용). T-305 의존. `[area:security]` `[area:product]` (album-backend#129, album-frontend#63)
 - [x] **T-307** 보호자 초대 SMS 자동 발송 (CoolSMS) — T-304 manual_share 위에 자동 발송 레이어. CoolSMS (가입 OTP 와 동일 provider) 가 SMS 채널에서 자동 발송, 실패/미설정 시 manual_share fallback. dead code `biztalk_service.py` 및 `BIZZTALK_*` config / SealedSecret 제거. T-304 follow-up. `[area:backend]` `[area:ops]` (album-backend#126)
+- [ ] **T-315** ArgoCD `reconciledAt` lag 알람 — `argocd-repo-server` git polling 이 조용히 멈추는 사고가 4일 새 두 번 (2026-05-06 frontend bundle stale, 2026-05-10 T-303 backend bump 후 ~55분 stale). ArgoCD app 은 `Synced/Healthy` 거짓 보고 + Uptime Kuma ping (T-040/T-041) 은 origin pod image 차이를 못 잡음. k8s CronJob 으로 5분마다 `kubectl get application -o json` 의 `reconciledAt` 들 긁어 lag>10min warn / lag>30min critical Discord 발송 (T-041 웹훅 재사용, Prometheus 도입 회피). T-129 (ArgoCD Notifications) follow-up. **채번 메모: 원래 [T-309] 로 OPEN 됐으나 같은 시점 다른 세션이 cron image SHA stale 사고를 같은 번호로 채번 (roadmap#234 merged) → 본 항목 T-315 로 재번호. T-314 는 사진 삭제 FK cleanup (roadmap#245 진행 중) 에서 선점.** `[area:ops]` (roadmap#227)
 
 ---
 
