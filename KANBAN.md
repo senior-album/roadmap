@@ -138,7 +138,7 @@
 ### security (4)
 
 - [ ] **T-200** etcd encryption at rest (RKE2 등 전환 검토) `[area:security]`
-- [ ] **T-201** Trivy 이미지 스캐너 CI + gitleaks·truffleHog 시크릿 감지 `[area:security]`
+- [x] **T-201** Trivy 이미지 스캐너 CI + gitleaks 시크릿 감지 (truffleHog 는 gitleaks 와 중복으로 생략) `[area:security]` (album-backend a402e93 도입 + #35 strict, album-frontend 51584c0 도입). 도입 초기 Trivy 는 step-level soft-fail (`continue-on-error: true`), `.trivyignore` 정리 후 strict 전환은 별도 후속.
 - [ ] **T-202** 침투 테스트 외주 (고객 2~3곳 확보 후) `[area:security]`
 - [ ] **T-203** SSL/TLS 등급 A+ (Qualys SSL Labs) `[area:security]`
 
