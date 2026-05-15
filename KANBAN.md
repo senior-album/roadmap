@@ -91,7 +91,7 @@
 
 - [x] **T-120** Alembic 도입 → `DDL_AUTO=create` / `_add_missing_columns` 제거 + CI `alembic upgrade head` `[area:ops]`
 - [ ] **T-121** 백업 복구 리허설 분기 1회 `[area:ops]`
-- [ ] **T-122** OpenTelemetry 자동 계측 + Grafana Cloud 무료 티어 `[area:ops]`
+- [x] **T-122** OpenTelemetry 자동 계측 + 셀프호스트 Tempo (traces only; metrics/Prometheus 는 후속). 외부 SaaS 가입 회피 — 기존 맥미니 Grafana/Loki 인프라 재사용. backend SDK 가 endpoint 미설정 시 silent no-op 이라 두 PR 안전 분리. trace_id 가 JSON 로그에도 주입돼 Loki↔Tempo 양방향 점프. `[area:ops]` (album-backend#138, album-deploy#38)
 - [x] **T-123** 구조화 로그 (JSON logging) 전환 `[area:ops]`
 - [x] **T-124** 핵심 로직 테스트 커버리지 70% (JWT, face_recognition, 업로드 플로우) `[area:ops]`
 - [x] **T-125** Dependabot 의존성 업데이트 + pip-audit `[area:ops]`
