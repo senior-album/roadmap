@@ -1,6 +1,6 @@
 # Senior Album — 칸반보드
 
-**97개 할일** · P0(11) · P1(28) · P2(40) · P3(18)
+**98개 할일** · P0(12) · P1(28) · P2(40) · P3(18)
 근거: `reports/01_security_analysis.md`, `02_market_viability.md`, `03_operations_playbook.md`
 
 > 체크박스를 클릭해 진척을 표시하거나, GitHub Projects 칸반 뷰로 드래그하세요.
@@ -13,7 +13,7 @@
 
 - [x] **T-001** JWT_SECRET 기본값 제거 → `.env` 필수화, 시크릿 재생성 `[area:security]`
 - [x] **T-002** `cloudflared.yaml` TUNNEL_TOKEN 매니페스트에서 제거 + 과거 git 히스토리 purge `[area:security]`
-- [x] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. User.phone 은 별도 후속 이슈. `[area:security]`
+- [x] **T-003** Resident PII (`name`, `birth_date`, `medical_notes`) envelope encryption (KEK + 행별 DEK + AES-256-GCM) + name blind index. 5 서브이슈 분할 진행. `User.phone` 등 phone 도메인 PII 는 T-320 으로 분리. `[area:security]`
 - [x] **T-004** OpenSearch 얼굴 임베딩 인덱스 전송·저장 암호화 옵션 적용 `[area:security]`
 - [x] **T-005** 파일 업로드 검증 강화: 20MB 크기 + python-magic MIME + 확장자 화이트리스트 + Pillow 디코딩 확인 `[area:security]`
 - [x] **T-006** 카카오 OAuth `state` 파라미터 생성·검증 (CSRF 방어) `[area:security]`
@@ -22,6 +22,7 @@
 - [x] **T-009** JWT_EXPIRE_MINUTES 60 축소 + refresh 토큰 구조 설계 `[area:security]`
 - [x] **T-010** CORS `allow_methods`/`allow_headers` 명시적 화이트리스트 `[area:security]`
 - [x] **T-011** Presigned URL(1h) vs `share_expires_at`(72h) 정책 통일 — 접근 시 매회 재발급 `[area:security]`
+- [ ] **T-320** phone 도메인 PII envelope encryption + blind-index — T-003 후속, 확장 스코프. 대상 4 컬럼: `User.phone` (UNIQUE → bi 이전), `Facility.phone`, `Invitation.phone` (T-149), `PhoneClaimReport.claimed_phone`. KEK 는 `RESIDENT_PII_KEK` 재사용, blind-index 키는 `USER_PHONE_HMAC_KEY` 신규. 5 서브이슈 분할 진행 (T-320-1 인프라 → -2 마이그+모델 → -3 lookup 흐름 → -4 외부 발송/어드민 → -5 정리·테스트). 마이그는 `User.phone` UNIQUE 이전 시 ROW_NUMBER dedup 동반. `[area:security]` (roadmap#167, roadmap#256, roadmap#257, roadmap#258, roadmap#259, roadmap#260)
 
 ---
 
